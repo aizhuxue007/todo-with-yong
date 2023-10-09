@@ -33,7 +33,7 @@ app.post('/', (req, res) => {
 });
 
 app.delete('/', (req, res) => {
-    console.log(req.body[0])
+    console.log(req.body)
     if (req.body.id !== undefined) {
         todoItems = todoItems.filter(todo => {
             console.log(todo.id);
