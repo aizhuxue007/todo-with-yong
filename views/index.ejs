@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>Todo List</title>
+  </head>
+  <body>
+    <form action="/" method="POST">
+        <input type="text" id="item" name="item" required/>
+        <button>Submit</button>
+    </form>
+    <ul class="todos">
+        <% for (let todoItem of todoItems) { %>
+            <li>
+                Item #<%= todoItem.id %>:  <%= todoItem.item %>, due by <%= todoItem.date %>
+                
+                <a href="/edit">Edit</a>
+                <!-- <form method="POST" action="/delete" enctype="application/x-www-form-urlencoded">
+                    <input type="hidden" name="_method" value="DELETE">
+                    <button type="submit">Delete resource</button>
+                  </form> -->
+
+                <form action="/?_method=DELETE" method="POST">
+                    <input type="hidden" name="_method" value="DELETE">
+                    <button>Delete</button>
+                </form>
+            </li>
+        <% } %>
+    </ul>
+  </body>
+</html>
