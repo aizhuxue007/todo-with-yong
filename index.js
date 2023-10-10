@@ -20,6 +20,7 @@ app.use(methodOverride('_method'));
 let id = 0;
 let todoItems = []
 
+/*
 for (let i = 0; i <= 10; i++) {
     todoItems.push({  
         id: i,
@@ -27,6 +28,7 @@ for (let i = 0; i <= 10; i++) {
         item: 'todo ' + i 
     })
 }
+*/
 
 app.get('/', (req, res) => {
     res.render('index', {todoItems});
@@ -51,7 +53,6 @@ app.delete('/:id', (req, res) => {
 app.get('/:id/edit', (req, res) => {
     const { id } = req.params;
     const editItem = todoItems.find(todoItem => Number(todoItem.id) === Number(id));
-    console.log(editItem);
     if (editItem) {
         res.render('edit', {editItem});
     } else {
@@ -66,7 +67,7 @@ app.patch('/:id', (req, res) => {
     res.redirect('/');
 });
 
-app.all('*', (req, res, next) => {
+app.all('*', (req, res) => {
     res.render('undefined');
 });
 
