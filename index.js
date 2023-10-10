@@ -15,9 +15,18 @@ app.use(bodyParser.urlencoded({extended: false}))
 
 app.use(methodOverride('_method'));
 
-let todoItems = [];
+
 
 let id = 0;
+let todoItems = []
+
+for (let i = 0; i <= 10; i++) {
+    todoItems.push({  
+        id: i,
+        date: new Date(),
+        item: 'todo ' + i 
+    })
+}
 
 app.get('/', (req, res) => {
     res.render('index', {todoItems});
@@ -27,24 +36,38 @@ app.post('/', (req, res) => {
     id++;
     const today = new Date();
     const newItem = req.body.item;
-    console.log(newItem);
     todoItems.push({ id, date: today, item: newItem });
     res.redirect('/');
 });
 
-app.delete('/', (req, res) => {
-    console.log(req.body)
-    if (req.body.id !== undefined) {
-        todoItems = todoItems.filter(todo => {
-            console.log(todo.id);
-            console.log(req.body);
-            return todo.id !== req.body.id; 
-        });
-    }
-    
-    // if todoItem has index of checkId
-        // delete todoItem[checkId]
+app.delete('/:id', (req, res) => {
+    const { id } = req.params;
+    todoItems = todoItems.filter(todo => {
+        return todo.id !== Number(id); 
+    });
     res.redirect('/');
+});
+
+app.get('/:id/edit', (req, res) => {
+    const { id } = req.params;
+    const editItem = todoItems.find(todoItem => Number(todoItem.id) === Number(id));
+    console.log(editItem);
+    if (editItem) {
+        res.render('edit', {editItem});
+    } else {
+        res.render('undefined');
+    }
+});
+
+app.patch('/:id', (req, res) => {
+    const { id } = req.params;
+    const foundIndex = todoItems.findIndex(todoItem => todoItem.id === Number(id));
+    todoItems[foundIndex].item = req.body.item;
+    res.redirect('/');
+});
+
+app.all('*', (req, res, next) => {
+    res.render('undefined');
 });
 
 app.listen(3000, () => {
