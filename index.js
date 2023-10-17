@@ -3,7 +3,20 @@ const bodyParser = require('body-parser')
 const path = require('path');
 const methodOverride = require('method-override');
 
+const mongoose = require('mongoose');
+
 const app = express();
+
+const dbUrl = "mongodb+srv://aizhuprogram:U7OV9Bhsl7oHQsj3@cluster0.br6atar.mongodb.net/";
+
+mongoose.connect(dbUrl, { useNewUrlParser: true, useUnifiedTopology: true })
+    .then(() => {
+        console.log("Connection open!");
+    })
+    .catch(error => {
+        console.log("Error!");
+        console.log(error);
+    })
 
 app.set('view engine', 'ejs');
 
@@ -15,7 +28,7 @@ app.use(bodyParser.urlencoded({extended: false}))
 
 app.use(methodOverride('_method'));
 
-
+// mongodb+srv://aizhuprogram:<password>@cluster0.br6atar.mongodb.net/
 
 let id = 0;
 let todoItems = []
