@@ -5,6 +5,8 @@ const methodOverride = require('method-override');
 
 const mongoose = require('mongoose');
 
+const Todo = require('./models/todo');
+
 const app = express();
 
 const dbUrl = "mongodb+srv://aizhuprogram:U7OV9Bhsl7oHQsj3@cluster0.br6atar.mongodb.net/";
@@ -28,55 +30,39 @@ app.use(bodyParser.urlencoded({extended: false}))
 
 app.use(methodOverride('_method'));
 
-// mongodb+srv://aizhuprogram:<password>@cluster0.br6atar.mongodb.net/
-
-let id = 0;
-let todoItems = []
-
-/*
-for (let i = 0; i <= 10; i++) {
-    todoItems.push({  
-        id: i,
-        date: new Date(),
-        item: 'todo ' + i 
-    })
-}
-*/
-
-app.get('/', (req, res) => {
-    res.render('index', {todoItems});
+app.get('/', async(req, res) => {
+    const todos = await Todo.find({});
+    console.log(todos)
+    res.render('index', {todos});
 });
 
-app.post('/', (req, res) => {
-    id++;
-    const today = new Date();
-    const newItem = req.body.item;
-    todoItems.push({ id, date: today, item: newItem });
-    res.redirect('/');
-});
-
-app.delete('/:id', (req, res) => {
-    const { id } = req.params;
-    todoItems = todoItems.filter(todo => {
-        return todo.id !== Number(id); 
-    });
-    res.redirect('/');
-});
-
-app.get('/:id/edit', (req, res) => {
-    const { id } = req.params;
-    const editItem = todoItems.find(todoItem => Number(todoItem.id) === Number(id));
-    if (editItem) {
-        res.render('edit', {editItem});
+app.get('/:id/edit', async(req, res) => {
+    const todo = await Todo.findById(req.params.id); 
+    if (todo) {
+        res.render('edit', {todo});
     } else {
         res.render('undefined');
     }
 });
 
-app.patch('/:id', (req, res) => {
+app.post('/', async(req, res) => {
+    const content = req.body.content;
+    const todo = new Todo(req.body);
+    console.log(todo);
+    await todo.save();
+    res.redirect('/');
+});
+
+app.patch('/:id', async(req, res) => {
     const { id } = req.params;
-    const foundIndex = todoItems.findIndex(todoItem => todoItem.id === Number(id));
-    todoItems[foundIndex].item = req.body.item;
+    const todo = await Todo.findByIdAndUpdate(id, { ...req.body });
+    await todo.save();
+    res.redirect('/');
+});
+
+app.delete('/:id', async(req, res) => {
+    const { id } = req.params;
+    await Todo.findByIdAndDelete(id);
     res.redirect('/');
 });
 
